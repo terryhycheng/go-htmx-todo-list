@@ -1,0 +1,15 @@
+{
+  "name": "go-todo-list",
+  "version": "1.0.0",
+  "description": "## Get Started",
+  "main": "index.js",
+  "scripts": {
+    "tailwindcss": "npx tailwindcss -i ./web/style/input.css -o ./build/css/output.css --minify --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
