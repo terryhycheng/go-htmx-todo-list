@@ -3,11 +3,15 @@ package partials
 templ MainLayout() {
 	<html>
 		<head>
-			<title>My App</title>
+			<title>Go Todo Box</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="stylesheet" href="/css/output.css"/>
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 		</head>
-		<body>
-			{ children... }
+		<body class="bg-primary lg:p-20 text-white tracking-wide">
+			<div class="container max-w-[1000px] h-full m-auto p-6 pb-0 lg:p-14 bg-gradient-to-b from-[#071112] to-[#010707] rounded-xl flex flex-col gap-8">
+				{ children... }
+			</div>
 		</body>
 	</html>
 }

@@ -1,0 +1,13 @@
+package pages
+
+import (
+	"github.com/terryhycheng/go-todo-list/web/partials"
+	"github.com/terryhycheng/go-todo-list/internal/types"
+)
+
+templ Homepage(cards *[]*types.Card) {
+	@partials.MainLayout() {
+		@partials.Header()
+		@partials.CardList(cards)
+	}
+}

@@ -1,0 +1,37 @@
+package partials
+
+import "github.com/terryhycheng/go-todo-list/internal/types"
+import "github.com/terryhycheng/go-todo-list/internal/helpers"
+
+templ CardList(cards *[]*types.Card) {
+	<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-auto px-2">
+		for _, cardData := range *cards {
+			@card(cardData)
+		}
+	</div>
+}
+
+templ card(card *types.Card) {
+	<div class={ "p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + helpers.GetCardBorder(card.IsDone) }>
+		<div class={ "w-14 h-14 rounded-full flex justify-center p-2 items-center mx-auto mb-4 " + helpers.GetCardIconBgColour(card) }>
+			<img src={ helpers.GetCardIconPath(card) } class="w-full h-full mx-auto" alt="Card Icon"/>
+		</div>
+		<h2 class="text-xl font-semibold">
+			if card.Title != "" {
+				{ card.Title }
+			} else {
+				Unititled Card
+			}
+		</h2>
+		if card.Content != "" {
+			<p class="text-[#A3A3A3] font-light text-sm mt-2">{ card.Content }</p>
+		}
+		<button type="button" class={ helpers.GetButtonColour(card) + " text-sm font-light py-2 mt-4 w-full rounded-sm hover:brightness-125 transition-all" }>
+			if card.IsDone {
+				Undo
+			} else {
+				Mark as Done
+			}
+		</button>
+	</div>
+}

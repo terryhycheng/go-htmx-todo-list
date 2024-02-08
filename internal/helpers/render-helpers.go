@@ -1,4 +1,4 @@
-package internal
+package helpers
 
 import (
 	"github.com/a-h/templ"

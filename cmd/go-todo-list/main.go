@@ -7,10 +7,11 @@ import (
 
 func main() {
 	port := "3000"
-	e := echo.New()
+	e := echo.New()	
 
 	e.GET("/", controllers.HomePageController)
 	e.Static("/css", "build/css") 
+	e.Static("/assets", "assets") 
 
 	e.Logger.Fatal(e.Start(":" + port))
 }

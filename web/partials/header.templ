@@ -1,7 +1,28 @@
-package partials
+package partials 
 
 templ Header() {
-	<header>
-		<h1>Go todo list</h1>
+	<header class="flex gap-4 items-center justify-between flex-col lg:flex-row">
+		<div class="flex gap-4 items-center flex-col lg:flex-row text-center lg:text-left">
+			<div class="h-10">
+				<img src="/assets/go-logo.png" alt="go logo" class="h-full object-fit"/>
+			</div>
+			<div>
+				<h1 class="font-bold text-3xl uppercase">to-do box</h1>
+				<p class="text-sm opacity-50 font-light">still the best way to test a new stack</p>
+			</div>
+		</div>
+		// Action buttons
+		<div class="flex gap-4">
+			@Button("assets/CheckOutline.svg", "check")
+			@Button("assets/LightningBoltOutline.svg", "lightning-blot")
+			@Button("assets/SunOutline.svg", "check")
+			@Button("assets/UserOutline.svg", "check")
+		</div>
 	</header>
+}
+
+templ Button(link string, altText string) {
+	<button class="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all">
+		<img src={ link } alt={ altText } class="h-8"/>
+	</button>
 }

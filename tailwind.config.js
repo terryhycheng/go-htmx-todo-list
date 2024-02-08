@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./**/*.{go, templ}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#061012",
+      },
+    },
   },
   plugins: [],
 };
