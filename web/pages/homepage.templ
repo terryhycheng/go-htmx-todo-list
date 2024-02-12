@@ -2,12 +2,12 @@ package pages
 
 import (
 	"github.com/terryhycheng/go-todo-list/web/partials"
-	"github.com/terryhycheng/go-todo-list/internal/types"
+	"github.com/terryhycheng/go-todo-list/internal/models"
 )
 
-templ Homepage(cards *[]*types.Card) {
+templ Homepage(todo *models.Todos) {
 	@partials.MainLayout() {
 		@partials.Header()
-		@partials.CardList(cards)
+		@partials.CardList(todo)
 	}
 }

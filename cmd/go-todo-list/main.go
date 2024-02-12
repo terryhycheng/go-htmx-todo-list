@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/terryhycheng/go-todo-list/api/controllers"
+	"github.com/terryhycheng/go-todo-list/internal/controllers"
 )
 
 func main() {
@@ -10,6 +10,7 @@ func main() {
 	e := echo.New()	
 
 	e.GET("/", controllers.HomePageController)
+	e.POST("/add", controllers.AddTodoController)
 	e.Static("/css", "build/css") 
 	e.Static("/assets", "assets") 
 

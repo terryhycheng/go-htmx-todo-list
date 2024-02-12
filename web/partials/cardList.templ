@@ -1,9 +1,11 @@
 package partials
 
-import "github.com/terryhycheng/go-todo-list/internal/types"
-import "github.com/terryhycheng/go-todo-list/internal/helpers"
+import (
+	h "github.com/terryhycheng/go-todo-list/web/utils"
+	"github.com/terryhycheng/go-todo-list/internal/models"
+)
 
-templ CardList(cards *[]*types.Card) {
+templ CardList(cards *models.Todos) {
 	<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-auto px-2">
 		for _, cardData := range *cards {
 			@card(cardData)
@@ -11,10 +13,10 @@ templ CardList(cards *[]*types.Card) {
 	</div>
 }
 
-templ card(card *types.Card) {
-	<div class={ "p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + helpers.GetCardBorder(card.IsDone) }>
-		<div class={ "w-14 h-14 rounded-full flex justify-center p-2 items-center mx-auto mb-4 " + helpers.GetCardIconBgColour(card) }>
-			<img src={ helpers.GetCardIconPath(card) } class="w-full h-full mx-auto" alt="Card Icon"/>
+templ card(card *models.Todo) {
+	<div class={ "p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + h.GetCardBorder(card.IsDone) }>
+		<div class={ "w-14 h-14 rounded-full flex justify-center p-2 items-center mx-auto mb-4 " + h.GetCardIconBgColour(card) }>
+			<img src={ h.GetCardIconPath(card) } class="w-full h-full mx-auto" alt="Card Icon"/>
 		</div>
 		<h2 class="text-xl font-semibold">
 			if card.Title != "" {
@@ -26,7 +28,7 @@ templ card(card *types.Card) {
 		if card.Content != "" {
 			<p class="text-[#A3A3A3] font-light text-sm mt-2">{ card.Content }</p>
 		}
-		<button type="button" class={ helpers.GetButtonColour(card) + " text-sm font-light py-2 mt-4 w-full rounded-sm hover:brightness-125 transition-all" }>
+		<button type="button" class={ h.GetButtonColour(card) + " text-sm font-light py-2 mt-4 w-full rounded-sm hover:brightness-125 transition-all" }>
 			if card.IsDone {
 				Undo
 			} else {

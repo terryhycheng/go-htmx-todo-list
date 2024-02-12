@@ -10,10 +10,12 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/terryhycheng/go-todo-list/internal/types"
-import "github.com/terryhycheng/go-todo-list/internal/helpers"
+import (
+	"github.com/terryhycheng/go-todo-list/internal/models"
+	h "github.com/terryhycheng/go-todo-list/web/utils"
+)
 
-func CardList(cards *[]*types.Card) templ.Component {
+func CardList(cards *models.Todos) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -47,7 +49,7 @@ func CardList(cards *[]*types.Card) templ.Component {
 	})
 }
 
-func card(card *types.Card) templ.Component {
+func card(card *models.Todo) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -60,7 +62,7 @@ func card(card *types.Card) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		var templ_7745c5c3_Var3 = []any{"p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + helpers.GetCardBorder(card.IsDone)}
+		var templ_7745c5c3_Var3 = []any{"p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + h.GetCardBorder(card.IsDone)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -77,7 +79,7 @@ func card(card *types.Card) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var4 = []any{"w-14 h-14 rounded-full flex justify-center p-2 items-center mx-auto mb-4 " + helpers.GetCardIconBgColour(card)}
+		var templ_7745c5c3_Var4 = []any{"w-14 h-14 rounded-full flex justify-center p-2 items-center mx-auto mb-4 " + h.GetCardIconBgColour(card)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var4...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -94,7 +96,7 @@ func card(card *types.Card) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(helpers.GetCardIconPath(card)))
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(h.GetCardIconPath(card)))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -106,7 +108,7 @@ func card(card *types.Card) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(card.Title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/partials/cardList.templ`, Line: 20, Col: 16}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/partials/cardList.templ`, Line: 22, Col: 16}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -130,7 +132,7 @@ func card(card *types.Card) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(card.Content)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/partials/cardList.templ`, Line: 26, Col: 67}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/partials/cardList.templ`, Line: 28, Col: 67}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -141,7 +143,7 @@ func card(card *types.Card) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		var templ_7745c5c3_Var7 = []any{helpers.GetButtonColour(card) + " text-sm font-light py-2 mt-4 w-full rounded-sm hover:brightness-125 transition-all"}
+		var templ_7745c5c3_Var7 = []any{h.GetButtonColour(card) + " text-sm font-light py-2 mt-4 w-full rounded-sm hover:brightness-125 transition-all"}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var7...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err

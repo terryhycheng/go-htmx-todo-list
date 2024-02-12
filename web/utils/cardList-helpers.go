@@ -1,29 +1,28 @@
-package helpers
+package utils
 
-import "github.com/terryhycheng/go-todo-list/internal/types"
+import "github.com/terryhycheng/go-todo-list/internal/models"
 
-
-func GetButtonColour(card *types.Card) string {
+func GetButtonColour(card *models.Todo) string {
 	if card.IsDone {
-		return "bg-[#102916]"
+		return "bg-darkGreen"
 	} else {
 		if card.Status == "urgent" {
-			return "bg-[#2B2511]"
+			return "bg-darkYellow"
 		} else {
-			return "bg-[#11292B]"
+			return "bg-dark"
 		}
 	}
 }
 
 func GetCardBorder(isDone bool) string {
 	if isDone {
-		return "border border-[#5CA05A]"
+		return "border border-green"
 	}
 
 	return ""
 }
 
-func GetCardIconPath(card *types.Card) string {
+func GetCardIconPath(card *models.Todo) string {
 	var iconName string
 	
 	if card.IsDone {
@@ -41,14 +40,14 @@ func GetCardIconPath(card *types.Card) string {
 	return "/assets/" + iconName + ".svg"	
 }
 
-func GetCardIconBgColour(card *types.Card) string {
+func GetCardIconBgColour(card *models.Todo) string {
 	if card.IsDone {
-		return "bg-[#5CA05A]"
+		return "bg-green"
 	}
 
 	if card.Status == "urgent" {
-		return "bg-[#B6A155]"
+		return "bg-yellow"
 	}
 
-	return "bg-[#112C2E]"
+	return "bg-dark"
 }

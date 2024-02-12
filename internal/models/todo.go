@@ -7,12 +7,12 @@ import (
 )
 
 type Todo struct {
-	Id uuid.UUID `json:"id"`
-	Title string `json:"title"`
-	Content string `json:"content"`
-	Status string `json:"status"`
-	IsDone bool `json:"isDone"`
-	CreatedAt time.Time `json:"createdAt"`
+	Id uuid.UUID `json:"id" redis:"id"`
+	Title string `json:"title" redis:"title"`
+	Content string `json:"content" redis:"content"`
+	Status string `json:"status" redis:"status"`
+	IsDone bool `json:"isDone" redis:"isDone"`
+	CreatedAt time.Time `json:"createdAt" redis:"createdAt"`
 }
 
 func NewTodo(title string, discription string, status string) *Todo {
