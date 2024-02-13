@@ -34,11 +34,10 @@ func (t *Todo) Add(title string, description string, priority string) error {
 	t.Content = description
 	t.Priority = priority
 
-	_, pushErr := client.LPush(ctx, "todos", t.Id.String()).Result()
-	if pushErr != nil {
-		return errors.New("Failed to push todo to Redis todos list")
+	addErr := NewTodos().Add(t)
+	if addErr != nil {
+		return addErr
 	}
-
 
 	json, jsonMarshalErr := json.Marshal(t)
 	if jsonMarshalErr != nil {
@@ -46,6 +45,17 @@ func (t *Todo) Add(title string, description string, priority string) error {
 	}
 
 	_, setJsonErr := client.JSONSet(ctx, "todo:" + t.Id.String(), ".", json).Result()
+	if setJsonErr != nil {
+		return errors.New("Failed to set todo in Redis")
+	}
+
+	return nil
+}
+
+func (t *Todo) ChangeStatus() error {
+	t.IsDone = !t.IsDone
+
+	_, setJsonErr := client.JSONSet(ctx, "todo:" + t.Id.String(), ".isDone", t.IsDone).Result()
 	if setJsonErr != nil {
 		return errors.New("Failed to set todo in Redis")
 	}

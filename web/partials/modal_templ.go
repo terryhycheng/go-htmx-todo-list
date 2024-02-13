@@ -169,7 +169,7 @@ func addTodoForm() templ.Component {
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/add\" hx-target=\"#list\" hx-swap=\"afterbegin\" class=\"flex flex-col gap-4\" id=\"add-form\"><input name=\"title\" type=\"text\" id=\"title\" placeholder=\"Title\" class=\"p-2 rounded-md bg-white/10\"> <select name=\"priority\" id=\"priority\" class=\"p-2 rounded-md bg-white/10\"><option disabled selected value=\"\">Priority</option> ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/todo\" hx-target=\"#list\" hx-swap=\"afterbegin\" class=\"flex flex-col gap-4\" id=\"add-form\"><input name=\"title\" type=\"text\" id=\"title\" placeholder=\"Title\" class=\"p-2 rounded-md bg-white/10\"> <select name=\"priority\" id=\"priority\" class=\"p-2 rounded-md bg-white/10\"><option disabled selected value=\"\">Priority</option> ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

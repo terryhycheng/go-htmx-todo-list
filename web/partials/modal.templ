@@ -61,7 +61,7 @@ templ addButton() {
 var options = []string{"normal", "urgent"}
 
 templ addTodoForm() {
-	<form hx-post="/add" hx-target="#list" hx-swap="afterbegin" class="flex flex-col gap-4" id="add-form">
+	<form hx-post="/todo" hx-target="#list" hx-swap="afterbegin" class="flex flex-col gap-4" id="add-form">
 		<input name="title" type="text" id="title" placeholder="Title" class="p-2 rounded-md bg-white/10"/>
 		<select name="priority" id="priority" class="p-2 rounded-md bg-white/10">
 			<option disabled selected value="">Priority</option>

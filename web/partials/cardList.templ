@@ -14,7 +14,8 @@ templ CardList(cards *models.Todos) {
 }
 
 templ Card(card *models.Todo) {
-	<div class={ "p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + h.GetCardBorder(card.IsDone) } id={ "card-" + card.Id.String() }>
+	<div class={ "p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center border border-[#091718] relative " + h.GetCardBorder(card.IsDone) } id={ "card-" + card.Id.String() }>
+		<img src="/assets/X.svg" class="w-6 h-6 absolute top-4 right-4 cursor-pointer hover:brightness-200 transition-all" alt="Close Icon" hx-delete={ "/todo/" + card.Id.String() } hx-swap="outerHTML" hx-target="#list" hx-confirm="Do you really want to delete this todo?"/>
 		<div class={ "w-14 h-14 rounded-full flex justify-center p-2 items-center mx-auto mb-4 " + h.GetCardIconBgColour(card) }>
 			<img src={ h.GetCardIconPath(card) } class="w-full h-full mx-auto" alt="Card Icon"/>
 		</div>
@@ -28,7 +29,7 @@ templ Card(card *models.Todo) {
 		if card.Content != "" {
 			<p class="text-[#A3A3A3] font-light text-sm mt-2">{ card.Content }</p>
 		}
-		<button type="button" class={ h.GetButtonColour(card) + " text-sm font-light py-2 mt-4 w-full rounded-sm hover:brightness-125 transition-all" }>
+		<button type="button" hx-put={ "/todo/status/" + card.Id.String() } hx-swap="outerHTML" hx-target={ "#card-" + card.Id.String() } class={ h.GetButtonColour(card) + " text-sm font-light py-2 mt-4 w-full rounded-sm hover:brightness-125 transition-all" }>
 			if card.IsDone {
 				Undo
 			} else {

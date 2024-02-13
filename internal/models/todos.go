@@ -32,15 +32,11 @@ func (t *Todos) GetAll() error {
 			return errors.New("Failed to get todo details: " + err.Error())
 		}
 
-		todoModel := &Todo{}
+		todoModel := NewTodo()
 
 		json.Unmarshal([]byte(todo), todoModel)
 
-		addErr := t.Add(todoModel.Title, todoModel.Content, todoModel.Priority)
-
-		if addErr != nil {
-			return errors.New("Failed to add todo to the homepage list: " + addErr.Error())
-		}
+		*t = append(*t, todoModel)
 	}
 
 	return nil
@@ -50,61 +46,39 @@ func (t *Todos) GetByID(id uuid.UUID) (*Todo, int, error) {
 	index := t.IndexOf(id)
 
 	if index == -1 {
-		return nil, index, h.Error(h.ErrTodoNotFound)
+		return nil, index, errors.New("Todo not found")
 	}
 
 	return (*t)[index], index, nil
 }
 
-func (t *Todos) Add(title string, description string, status string) error {
-	if title == "" {
-		return h.Error(h.ErrTitleRequired)
+func (t *Todos) Add(todo *Todo) error {
+	*t = append(*t, todo)
+
+	_, pushErr := client.LPush(ctx, "todos", todo.Id.String()).Result()
+	if pushErr != nil {
+		return errors.New("Failed to push todo to Redis todos list")
 	}
-
-	if description == "" {
-		return h.Error(h.ErrDescriptionRequired)
-	}
-
-	if status == "" {
-		return h.Error(h.ErrStatusRequired)
-	}
-
-	newTodo := NewTodo()
-
-	addErr := newTodo.Add(title, description, status)
-
-
-	if addErr != nil {
-		return errors.New("Failed to add todo details:" + addErr.Error())
-	}
-
-	*t = append(*t, newTodo)
 
 	return nil
 }
 
-func (t *Todos) Update(id uuid.UUID, title string, description string, isDone bool) (*Todo, error) {
-	todo, _ , err := t.GetByID(id)
-
-	if err != nil {
-		return nil, err
-	}
-
-	todo.Update(title, description, isDone)
-
-	return todo, nil
-}
-
-func (t *Todos) Delete(id uuid.UUID) (*Todo, error) {
+func (t *Todos) Delete(id uuid.UUID) error {
 	todo, index, err := t.GetByID(id)
-
-	if err != nil {
-		return nil, err
-	}
-	
 	*t = append((*t)[:index], (*t)[index+1:]...)
 
-	return todo, nil
+	if err != nil {
+		return err
+	}
+
+	_, delErr := client.LRem(ctx, "todos", 0, todo.Id.String()).Result()
+
+	if delErr != nil {
+		return errors.New("Failed to remove todo from Redis todos list")
+	}
+	
+
+	return nil
 }
 
 func (t *Todos) IndexOf(id uuid.UUID) int {
