@@ -6,7 +6,7 @@ func GetButtonColour(card *models.Todo) string {
 	if card.IsDone {
 		return "bg-darkGreen"
 	} else {
-		if card.Status == "urgent" {
+		if card.Priority == "urgent" {
 			return "bg-darkYellow"
 		} else {
 			return "bg-dark"
@@ -29,7 +29,7 @@ func GetCardIconPath(card *models.Todo) string {
 		iconName = "CheckOutline"
 	} else {
 
-		if card.Status == "urgent" {
+		if card.Priority == "urgent" {
 			iconName = "LightningBoltOutline"
 	} else {
 		iconName = "CalendarOutline"
@@ -45,7 +45,7 @@ func GetCardIconBgColour(card *models.Todo) string {
 		return "bg-green"
 	}
 
-	if card.Status == "urgent" {
+	if card.Priority == "urgent" {
 		return "bg-yellow"
 	}
 

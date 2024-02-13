@@ -1,0 +1,75 @@
+package partials
+
+script addBtnScript() {
+    const addBtn = document.getElementById('add-btn');
+    const addModal = document.getElementById('add-modal');
+    const closeBtn = document.getElementById('close-btn');
+
+    addBtn.addEventListener('click', () => {
+        addModal.classList.remove('hidden');
+    });
+
+    closeBtn.addEventListener('click', () => {
+        addModal.classList.add('hidden');
+    });     
+}
+
+script clearUpScript() {
+    document.body.addEventListener('htmx:afterSwap', () => {
+        const addModal = document.getElementById('add-modal');
+        const form = document.getElementById('add-form');
+
+        form.reset();
+
+        addModal.classList.add('hidden');
+    });
+}
+
+templ modalLayout() {
+	@modalCard() {
+		@addTodoForm()
+	}
+	@addButton()
+	@addBtnScript()
+	@clearUpScript()
+}
+
+templ modalCard() {
+	<div class="fixed top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center hidden" id="add-modal">
+		<div class="bg-black p-10 rounded-lg relative min-w-[30vw]">
+			<button class="absolute top-5 right-5" id="close-btn">
+				<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+				</svg>
+			</button>
+			<h2>Add New Todo</h2>
+			<slot>
+				{ children... }
+			</slot>
+		</div>
+	</div>
+}
+
+templ addButton() {
+	<button class="absolute bottom-16 right-16 z-10 bg-white/10 p-3 rounded-full group hover:bg-white/15 transition-all" id="add-btn">
+		<div class="bg-[#263F42] p-5 rounded-full group-hover:brightness-125 transition-all">
+			<img src="/assets/AddIcon.svg" alt="Add" class="h-8 w-auto"/>
+		</div>
+	</button>
+}
+
+var options = []string{"normal", "urgent"}
+
+templ addTodoForm() {
+	<form hx-post="/add" hx-target="#list" hx-swap="afterbegin" class="flex flex-col gap-4" id="add-form">
+		<input name="title" type="text" id="title" placeholder="Title" class="p-2 rounded-md bg-white/10"/>
+		<select name="priority" id="priority" class="p-2 rounded-md bg-white/10">
+			<option disabled selected value="">Priority</option>
+			for _, option := range options {
+				<option value={ option }>{ option }</option>
+			}
+		</select>
+		<textarea id="description" name="description" placeholder="Description" class="p-2 rounded-md bg-white/10"></textarea>
+		<button type="submit" class="bg-[#263F42] text-white p-2 rounded-md hover:brightness-125 transition-all">Add</button>
+	</form>
+}

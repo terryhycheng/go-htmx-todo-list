@@ -1,6 +1,8 @@
 package models
 
 import (
+	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,26 +12,51 @@ type Todo struct {
 	Id uuid.UUID `json:"id" redis:"id"`
 	Title string `json:"title" redis:"title"`
 	Content string `json:"content" redis:"content"`
-	Status string `json:"status" redis:"status"`
+	Priority string `json:"priority" redis:"priority"`
 	IsDone bool `json:"isDone" redis:"isDone"`
 	CreatedAt time.Time `json:"createdAt" redis:"createdAt"`
 }
 
-func NewTodo(title string, discription string, status string) *Todo {
+func NewTodo() *Todo {
 	return &Todo{
 		Id: uuid.New(),
-		Title: title,
-		Content: discription,
-		Status: status,
 		IsDone: false,
 		CreatedAt: time.Now(),
 	}
 }
 
-func (t *Todo) Update(title string, discription string, isDone bool) *Todo {
+func (t *Todo) Add(title string, description string, priority string) error {
+	if title == "" || description == "" || priority == "" {
+		return errors.New("Title, description and priority are required")
+	}
+
+	t.Title = title
+	t.Content = description
+	t.Priority = priority
+
+	_, pushErr := client.LPush(ctx, "todos", t.Id.String()).Result()
+	if pushErr != nil {
+		return errors.New("Failed to push todo to Redis todos list")
+	}
+
+
+	json, jsonMarshalErr := json.Marshal(t)
+	if jsonMarshalErr != nil {
+		return errors.New("Failed to marshal todo")
+	}
+
+	_, setJsonErr := client.JSONSet(ctx, "todo:" + t.Id.String(), ".", json).Result()
+	if setJsonErr != nil {
+		return errors.New("Failed to set todo in Redis")
+	}
+
+	return nil
+}
+
+func (t *Todo) Update(title string, discription string, isDone bool) error {
 	t.Title = title
 	t.Content = discription
 	t.IsDone = isDone
 
-	return t
+	return nil
 }

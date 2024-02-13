@@ -6,15 +6,15 @@ import (
 )
 
 templ CardList(cards *models.Todos) {
-	<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-auto px-2">
+	<div class="grid md:grid-cols-2 xl:grid-cols-3 gap-4 overflow-auto px-2" id="list">
 		for _, cardData := range *cards {
-			@card(cardData)
+			@Card(cardData)
 		}
 	</div>
 }
 
-templ card(card *models.Todo) {
-	<div class={ "p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + h.GetCardBorder(card.IsDone) }>
+templ Card(card *models.Todo) {
+	<div class={ "p-10 flex flex-col justify-center bg-[#091718] rounded-xl text-center " + h.GetCardBorder(card.IsDone) } id={ "card-" + card.Id.String() }>
 		<div class={ "w-14 h-14 rounded-full flex justify-center p-2 items-center mx-auto mb-4 " + h.GetCardIconBgColour(card) }>
 			<img src={ h.GetCardIconPath(card) } class="w-full h-full mx-auto" alt="Card Icon"/>
 		</div>

@@ -22,7 +22,7 @@ templ Header() {
 }
 
 templ Button(link string, altText string) {
-	<button class="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all" x-on:click="alert('I\\'ve been clicked!')">
+	<button class="bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all">
 		<img src={ link } alt={ altText } class="h-8"/>
 	</button>
 }

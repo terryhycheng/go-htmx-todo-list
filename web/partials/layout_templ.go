@@ -23,11 +23,15 @@ func MainLayout() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><title>Go Todo Box</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"/css/output.css\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://cdn.jsdelivr.net/npm/alpinejs@3.13.5/dist/cdn.min.js\"></script></head><body class=\"bg-primary lg:p-20 text-white tracking-wide\"><div class=\"container max-w-[1000px] h-full m-auto p-6 pb-0 lg:p-14 bg-gradient-to-b from-[#071112] to-[#010707] rounded-xl flex flex-col gap-8\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html><head><title>Go Todo Box</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><link rel=\"stylesheet\" href=\"/css/output.css\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script></head><body class=\"bg-primary lg:p-20 text-white tracking-wide\"><div class=\"container max-w-[1000px] h-full m-auto p-6 pb-0 lg:p-14 bg-gradient-to-b from-[#071112] to-[#010707] rounded-xl flex flex-col gap-8 relative\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		templ_7745c5c3_Err = templ_7745c5c3_Var1.Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = modalLayout().Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

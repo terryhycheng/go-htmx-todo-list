@@ -67,7 +67,7 @@ func Button(link string, altText string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all\" x-on:click=\"alert(&#39;I\\&#39;ve been clicked!&#39;)\"><img src=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button class=\"bg-white/10 p-2 rounded-full hover:bg-white/20 transition-all\"><img src=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
