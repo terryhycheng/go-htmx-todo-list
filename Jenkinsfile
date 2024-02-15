@@ -1,34 +1,38 @@
 pipeline {
-  agent any
+  agent any  
+  tools { go '1.19' }
+
   stages {
-    stage('Checkout code') {
-      parallel {
-        stage('Checkout code') {
-          steps {
-            git(url: 'https://github.com/terryhycheng/go-htmx-todo-list', branch: 'main')
-          }
-        }
-
-        stage('Prepare Sonarqube') {
-          steps {
-            withSonarQubeEnv('Synology Sonar Server') {
-              waitForQualityGate true
-            }
-
-          }
-        }
-
-      }
-    }
-
-    stage('Run Test') {
+    stage('Checkout') {
       steps {
-        dockerNode(image: 'golang:1.22.0-alpine3.18') {
-          sh 'go test'
-        }
-
+        checkout scm
       }
     }
-
+    stage('Sonarqube') {
+      environment {
+          scannerHome = tool 'SonarQubeScanner'
+      }
+      steps {
+          withSonarQubeEnv('sonarqube') {
+              sh "${scannerHome}/bin/sonar-scanner"
+          }
+          timeout(time: 10, unit: 'MINUTES') {
+              waitForQualityGate abortPipeline: true
+          }
+      }
+    }
+    stage('Test') {
+      steps {
+        // Output will be something like "go version go1.19 darwin/arm64"
+        sh 'go version'
+        sh 'go test ./... -v -cover'
+      }
+    }
+    stage('Build') {
+      agent { dockerfile true }
+      steps {
+          docker.build("terryhycheng/go-hello-world:latest")
+        }
+      }
   }
 }
