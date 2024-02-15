@@ -1,6 +1,5 @@
 pipeline {
-  agent any  
-  tools { go '1.14' }
+  agent any
 
   stages {
     stage('Checkout') {
@@ -23,9 +22,12 @@ pipeline {
     }
     stage('Test') {
       steps {
-        // Output will be something like "go version go1.19 darwin/arm64"
-        sh 'go version'
-        sh 'go test ./... -v -cover'
+        script {
+        docker.image('golang:1.22.0-alpine3.19').inside {
+          sh 'go version'
+          sh 'go test ./... -v -cover'
+        }
+        }
       }
     }
     stage('Build') {
