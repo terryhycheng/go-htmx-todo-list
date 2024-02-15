@@ -1,6 +1,6 @@
 pipeline {
   agent any  
-  tools { go '1.19' }
+  tools { go '1.14' }
 
   stages {
     stage('Checkout') {
@@ -29,10 +29,11 @@ pipeline {
       }
     }
     stage('Build') {
-      agent { dockerfile true }
       steps {
+        script {
           docker.build("terryhycheng/go-hello-world:latest")
         }
+      }
       }
   }
 }
