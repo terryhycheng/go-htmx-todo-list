@@ -10,9 +10,11 @@ pipeline {
     stage('Sonarqube') {
       environment {
           scannerHome = tool 'SonarQubeScanner'
+          PROJECT_NAME = 'go-todo-list-scan'
       }
       steps {
           withSonarQubeEnv('Synology Sonar Server') {
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=$PROJECT_NAME"
           }
           timeout(time: 10, unit: 'MINUTES') {
               waitForQualityGate abortPipeline: true
