@@ -9,6 +9,8 @@ import (
 )
 
 func TestError(t *testing.T) {
+	asserts := assert.New(t)
+
 	tests := []struct{
 		name string
 		errorType string
@@ -24,11 +26,10 @@ func TestError(t *testing.T) {
 			errorType: "ERR_UNKNOWN_ERROR",
 			want: errors.New("ERR_UNKNOWN_ERROR"),
 		},
+
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			assert.True(t, assert.Equal(t, helpers.Error(tt.errorType), tt.want))
-		})
+		asserts.Equal(tt.want, helpers.Error(tt.errorType), "Incorrect error message returned for %s", tt.name)
 	}
 }
