@@ -22,7 +22,7 @@ pipeline {
           sh 'go test -coverprofile=coverage.out ./...'
           
           withSonarQubeEnv('Synology Sonar Server') {
-            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=$PROJECT_NAME -Dsonar.sources=. -Dsonar.language=go -Dsonar.go.coverage.reportPaths=./coverage.out"
+            sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=$PROJECT_NAME -Dsonar.sources=. -Dsonar.language=go -Dsonar.go.coverage.reportPaths=./coverage.out -Dsonar.coverage.exclusions=**/*_test.go -Dsonar.exclusions=**/*_templ.go,tailwind.config.js"
           }
           
           timeout(time: 10, unit: 'MINUTES') {
