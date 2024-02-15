@@ -9,9 +9,12 @@ pipeline {
           }
         }
 
-        stage('Sonarqube Sacnning') {
+        stage('') {
           steps {
-            waitForQualityGate true
+            withSonarQubeEnv('Synology Sonar Server') {
+              waitForQualityGate true
+            }
+
           }
         }
 
