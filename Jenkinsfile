@@ -4,6 +4,11 @@ pipeline {
   tools {
     go 'go-1.22'
   }
+  
+  environment {
+    registry = 'docker.io/terryhycheng/go-web'
+    dockerImage = ''
+  }
 
   stages {
     stage('Checkout') {
@@ -30,12 +35,19 @@ pipeline {
           }
       }
     }
-    stage('Build') {
+
+    stage('Build image') {
+      steps {
+          dockerImage = docker.build registry + ":latest"
+      }
+    }
+
+    stage('Push to Docker Hub') {
       steps {
           withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
             script {
-              docker.withRegistry('https://registry.hub.docker.com', "$DOCKER_HUB_CREDENTIALS") {
-                docker.build("docker.io/terryhycheng/go-web:latest").push('latest')
+              docker.withRegistry(registry, "$DOCKER_HUB_CREDENTIALS") {
+                dockerImage.push()
               }
             }
           }
