@@ -32,13 +32,13 @@ pipeline {
     }
     stage('Build') {
       steps {
-        WithCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
-          script {
-            docker.withRegistry('https://registry.hub.docker.com', "$DOCKER_HUB_CREDENTIALS") {
-              docker.build("docker.io/terryhycheng/go-web:latest").push('latest')
+          withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+            script {
+              docker.withRegistry('https://registry.hub.docker.com', "$DOCKER_HUB_CREDENTIALS") {
+                docker.build("docker.io/terryhycheng/go-web:latest").push('latest')
+              }
             }
           }
-        }
       }
     }
   }
