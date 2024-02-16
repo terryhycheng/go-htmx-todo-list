@@ -1,61 +1,38 @@
-pipeline {
-  agent any
+node {
+    def registry = 'docker.io/terryhycheng/go-web'
+    def dockerImage
 
-  tools {
-    go 'go-1.22'
-  }
-  
-  environment {
-    registry = 'docker.io/terryhycheng/go-web'
-    dockerImage = ''
-  }
-
-  stages {
     stage('Checkout') {
-      steps {
         checkout scm
-      }
     }
-    
+
     stage('Create coverage file & sonarqube') {
-      environment {
-          scannerHome = tool 'SonarQubeScanner'
-          PROJECT_NAME = 'go-todo-list-scan'
-      }
-      steps {
-          sh 'go version'
-          sh 'go test -coverprofile=coverage.out ./...'
-          
-          withSonarQubeEnv('Synology Sonar Server') {
+        def scannerHome
+        def PROJECT_NAME = 'go-todo-list-scan'
+        withEnv(['PATH+SONARQUBE_SCANNER=/path/to/sonar-scanner/bin']) {
+            sh 'go version'
+            sh 'go test -coverprofile=coverage.out ./...'
+
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=$PROJECT_NAME -Dsonar.sources=. -Dsonar.language=go -Dsonar.go.coverage.reportPaths=./coverage.out -Dsonar.coverage.exclusions=**/*_test.go -Dsonar.exclusions=**/*_templ.go,tailwind.config.js"
-          }
-          
-          timeout(time: 10, unit: 'MINUTES') {
-              waitForQualityGate abortPipeline: true
-          }
-      }
-    }
 
-   node {
-      stage('Build image') {
-        steps {
-          script {
-            dockerImage = docker.build(registry + ":latest")
-          }
-        }
-      }
-
-      stage('Push to Docker Hub') {
-        steps {
-            withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
-              script {
-                  docker.withRegistry(registry, "$DOCKER_HUB_CREDENTIALS") {
-                    dockerImage.push()
-                  }
+            timeout(time: 10, unit: 'MINUTES') {
+                def qg = waitForQualityGate()
+                if (qg.status != 'OK') {
+                    error 'Quality Gate failed: ${qg.status}'
                 }
-              }
             }
         }
-      }
     }
-  }
+
+    stage('Build image') {
+        dockerImage = docker.build(registry + ":latest")
+    }
+
+    stage('Push to Docker Hub') {
+        withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+            docker.withRegistry(registry, "$DOCKER_HUB_CREDENTIALS") {
+                dockerImage.push()
+            }
+        }
+    }
+}
