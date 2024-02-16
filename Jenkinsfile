@@ -36,25 +36,26 @@ pipeline {
       }
     }
 
-
-    stage('Build image') {
-      steps {
-        script {
-          dockerImage = build(registry + ":latest")
+   node {
+      stage('Build image') {
+        steps {
+          script {
+            dockerImage = docker.build(registry + ":latest")
+          }
         }
       }
-    }
 
-    stage('Push to Docker Hub') {
-      steps {
-          withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
-            script {
-                withRegistry(registry, "$DOCKER_HUB_CREDENTIALS") {
-                  dockerImage.push()
+      stage('Push to Docker Hub') {
+        steps {
+            withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
+              script {
+                  docker.withRegistry(registry, "$DOCKER_HUB_CREDENTIALS") {
+                    dockerImage.push()
+                  }
                 }
               }
             }
-          }
+        }
       }
     }
   }
