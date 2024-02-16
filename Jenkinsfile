@@ -3,7 +3,6 @@ pipeline {
 
   tools {
     go 'go-1.22'
-    'org.jenkinsci.plugins.docker.commons.tools.DockerTool' 'jenkins-docker'
   }
   
   environment {
@@ -41,9 +40,7 @@ pipeline {
     stage('Build image') {
       steps {
         script {
-          docker.withTool('jenkins-docker'){
-            dockerImage = docker.build registry + ":latest"
-          }
+          dockerImage = build(registry + ":latest")
         }
       }
     }
@@ -52,8 +49,7 @@ pipeline {
       steps {
           withCredentials([string(credentialsId: 'docker-hub-credentials', variable: 'DOCKER_HUB_CREDENTIALS')]) {
             script {
-              docker.withTool('jenkins-docker'){
-                docker.withRegistry(registry, "$DOCKER_HUB_CREDENTIALS") {
+                withRegistry(registry, "$DOCKER_HUB_CREDENTIALS") {
                   dockerImage.push()
                 }
               }
@@ -62,4 +58,3 @@ pipeline {
       }
     }
   }
-}
