@@ -19,7 +19,7 @@ func AddTodoController(c echo.Context) error {
 
 	createNewTodoErr := newTodo.Add(title, description, priority)
 	if createNewTodoErr != nil {
-		return c.String(http.StatusBadRequest, "Failed to create new todo: " + createNewTodoErr.Error())
+		return c.String(http.StatusBadRequest, "Failed to create new todo: "+createNewTodoErr.Error())
 	}
 
 	return helpers.Render(c, http.StatusCreated, partials.Card(newTodo))
@@ -28,7 +28,7 @@ func AddTodoController(c echo.Context) error {
 func ChangeTodoStatusController(c echo.Context) error {
 	id := c.Param("id")
 
-	uuid, idErr := uuid.Parse(id)
+	ParsedUuid, idErr := uuid.Parse(id)
 	if idErr != nil {
 		return c.String(http.StatusBadRequest, "Invalid UUID")
 	}
@@ -37,17 +37,17 @@ func ChangeTodoStatusController(c echo.Context) error {
 
 	getAllErr := todos.GetAll()
 	if getAllErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to get todos from Redis: " + getAllErr.Error())
+		return c.String(http.StatusInternalServerError, "Failed to get todos from Redis: "+getAllErr.Error())
 	}
 
-	todo, _, getTodoErr := todos.GetByID(uuid)
+	todo, _, getTodoErr := todos.GetByID(ParsedUuid)
 	if getTodoErr != nil {
-		return c.String(http.StatusNotFound, "Failed to get todo: " + getTodoErr.Error())
+		return c.String(http.StatusNotFound, "Failed to get todo: "+getTodoErr.Error())
 	}
 
 	changeStatusErr := todo.ChangeStatus()
 	if changeStatusErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to change status: " + changeStatusErr.Error())
+		return c.String(http.StatusInternalServerError, "Failed to change status: "+changeStatusErr.Error())
 	}
 
 	return helpers.Render(c, http.StatusOK, partials.Card(todo))
@@ -56,7 +56,7 @@ func ChangeTodoStatusController(c echo.Context) error {
 func DeleteTodoController(c echo.Context) error {
 	id := c.Param("id")
 
-	uuid, idErr := uuid.Parse(id)
+	ParsedUuid, idErr := uuid.Parse(id)
 	if idErr != nil {
 		return c.String(http.StatusBadRequest, "Invalid UUID")
 	}
@@ -65,10 +65,13 @@ func DeleteTodoController(c echo.Context) error {
 
 	getAllErr := todos.GetAll()
 	if getAllErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to get todos from Redis: " + getAllErr.Error())
+		return c.String(http.StatusInternalServerError, "Failed to get todos from Redis: "+getAllErr.Error())
 	}
 
-	todos.Delete(uuid)
+	deleteErr := todos.Delete(ParsedUuid)
+	if deleteErr != nil {
+		return c.String(http.StatusInternalServerError, "Failed to delete todo: "+deleteErr.Error())
+	}
 
 	return helpers.Render(c, http.StatusOK, partials.CardList(todos))
 }
