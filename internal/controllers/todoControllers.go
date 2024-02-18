@@ -17,6 +17,15 @@ func AddTodoController(c echo.Context) error {
 
 	newTodo := models.NewTodo()
 
+	if id := c.FormValue("id"); id != "" {
+		ParsedUuid, idErr := uuid.Parse(id)
+		if idErr != nil {
+			return c.String(http.StatusBadRequest, "Invalid UUID")
+		}
+
+		newTodo.Id = ParsedUuid
+	}
+
 	createNewTodoErr := newTodo.Add(title, description, priority)
 	if createNewTodoErr != nil {
 		return c.String(http.StatusBadRequest, "Failed to create new todo: "+createNewTodoErr.Error())

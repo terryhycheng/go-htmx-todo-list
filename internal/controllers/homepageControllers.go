@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -9,9 +8,6 @@ import (
 	"github.com/terryhycheng/go-todo-list/internal/models"
 	"github.com/terryhycheng/go-todo-list/web/pages"
 )
-
-var ctx = context.Background()
-var client = helpers.RedisClient()
 
 
 func HomePageController(c echo.Context) error {
