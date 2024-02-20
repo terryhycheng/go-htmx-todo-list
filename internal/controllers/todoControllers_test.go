@@ -14,6 +14,7 @@ import (
 )
 
 var id = uuid.New()
+var redisUrl = "redis://localhost:6379"
 
 func TestAddTodoController(t *testing.T) {
 	// Initialize echo framework for testing
@@ -37,7 +38,6 @@ func TestAddTodoController(t *testing.T) {
 }
 
 func TestChangeTodoStatusController(t *testing.T) {
-	// Mock the necessary dependencies if required for testing
 	// Initialize echo framework for testing
 	e := echo.New()
 
@@ -62,7 +62,6 @@ func TestChangeTodoStatusController(t *testing.T) {
 func TestDeleteTodoController(t *testing.T) {
 	asserts := assert.New(t)
 
-	// Mock the necessary dependencies if required for testing
 	// Initialize echo framework for testing
 	e := echo.New()
 
