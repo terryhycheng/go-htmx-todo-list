@@ -9,15 +9,7 @@ import (
 	"github.com/terryhycheng/go-todo-list/web/pages"
 )
 
-
 func HomePageController(c echo.Context) error {
-	todos := models.NewTodos()
-
-	getAllErr := todos.GetAll()
-
-	if getAllErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to get todos from Redis: " + getAllErr.Error())
-	}
-
+	todos := models.GetTodos()
 	return helpers.Render(c, http.StatusOK, pages.Homepage(todos))
 }

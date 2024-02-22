@@ -15,7 +15,7 @@ import (
 	"github.com/terryhycheng/go-todo-list/web/partials"
 )
 
-func Homepage(todo *models.Todos) templ.Component {
+func Homepage(todos []models.TodoGorm) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -42,7 +42,7 @@ func Homepage(todo *models.Todos) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = partials.CardList(todo).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = partials.CardList(todos).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
