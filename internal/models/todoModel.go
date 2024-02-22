@@ -1,11 +1,23 @@
 package models
 
 import (
-	"github.com/terryhycheng/go-todo-list/internal/helpers"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
+
+//go:generate mockery --name TodoRepository
+type TodoRepository interface {
+	AddTodo(todo TodoGorm) *TodoGorm
+	GetTodos() []TodoGorm
+	GetTodoById(id int64) *TodoGorm
+	DeleteTodoById(id int64) TodoGorm
+	ChangeStatus(id int64) *TodoGorm
+}
+
+type todoRepository struct {
+	db *gorm.DB
+}
 
 type TodoGorm struct {
 	gorm.Model
@@ -15,37 +27,35 @@ type TodoGorm struct {
 	IsDone   bool   `json:"is_done"`
 }
 
-func init() {
-	helpers.Connect()
-	db = helpers.GetDB()
-	db.AutoMigrate(&TodoGorm{})
+func NewTodoRepository(db *gorm.DB) TodoRepository {
+	return &todoRepository{db}
 }
 
-func (t *TodoGorm) AddTodo() *TodoGorm {
-	db.Create(&t)
-	return t
-}
-
-func GetTodos() []TodoGorm {
-	var todos []TodoGorm
-	db.Order("created_at DESC").Find(&todos)
-	return todos
-}
-
-func GetTodoById(id int64) *TodoGorm {
-	var todo TodoGorm
-	db.First(&todo, id)
+func (t *todoRepository) AddTodo(todo TodoGorm) *TodoGorm {
+	db.Create(&todo)
 	return &todo
 }
 
-func DeleteTodoById(id int64) TodoGorm {
+func (t *todoRepository) GetTodos() []TodoGorm {
+	var todos []TodoGorm
+	t.db.Order("created_at DESC").Find(&todos)
+	return todos
+}
+
+func (t *todoRepository) GetTodoById(id int64) *TodoGorm {
 	var todo TodoGorm
-	db.Delete(&todo, id)
+	t.db.First(&todo, id)
+	return &todo
+}
+
+func (t *todoRepository) DeleteTodoById(id int64) TodoGorm {
+	var todo TodoGorm
+	t.db.Delete(&todo, id)
 	return todo
 }
 
-func ChangeStatus(id int64) *TodoGorm {
-	todo := GetTodoById(id)
+func (t *todoRepository) ChangeStatus(id int64) *TodoGorm {
+	todo := t.GetTodoById(id)
 	todo.IsDone = !todo.IsDone
 	db.Save(&todo)
 	return todo

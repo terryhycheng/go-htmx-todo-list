@@ -10,7 +10,24 @@ import (
 	"github.com/terryhycheng/go-todo-list/web/partials"
 )
 
-func AddTodoController(c echo.Context) error {
+//go:generate mockery --name TodoControllers
+type TodoControllers interface {
+	AddTodoController(c echo.Context) error
+	ChangeTodoStatusController(c echo.Context) error
+	DeleteTodoController(c echo.Context) error
+}
+
+type todoControllers struct {
+	models models.TodoRepository
+}
+
+func NewTodoControllers(m models.TodoRepository) TodoControllers {
+	return &todoControllers{
+		models: m,
+	}
+}
+
+func (tc *todoControllers) AddTodoController(c echo.Context) error {
 	title := c.FormValue("title")
 	description := c.FormValue("description")
 	priority := c.FormValue("priority")
@@ -22,12 +39,12 @@ func AddTodoController(c echo.Context) error {
 		IsDone:   false,
 	}
 
-	newTodoGrom.AddTodo()
+	todo := tc.models.AddTodo(*newTodoGrom)
 
-	return helpers.Render(c, http.StatusCreated, partials.Card(newTodoGrom))
+	return helpers.Render(c, http.StatusCreated, partials.Card(todo))
 }
 
-func ChangeTodoStatusController(c echo.Context) error {
+func (tc *todoControllers) ChangeTodoStatusController(c echo.Context) error {
 	id := c.Param("id")
 
 	i, err := strconv.ParseInt(id, 10, 64)
@@ -36,12 +53,12 @@ func ChangeTodoStatusController(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Invalid ID")
 	}
 
-	todo := models.ChangeStatus(i)
+	todo := tc.models.ChangeStatus(i)
 
 	return helpers.Render(c, http.StatusOK, partials.Card(todo))
 }
 
-func DeleteTodoController(c echo.Context) error {
+func (tc *todoControllers) DeleteTodoController(c echo.Context) error {
 	id := c.Param("id")
 
 	i, err := strconv.ParseInt(id, 10, 64)
@@ -50,9 +67,9 @@ func DeleteTodoController(c echo.Context) error {
 		return c.String(http.StatusBadRequest, "Invalid ID")
 	}
 
-	models.DeleteTodoById(i)
+	tc.models.DeleteTodoById(i)
 
-	todos := models.GetTodos()
+	todos := tc.models.GetTodos()
 
 	return helpers.Render(c, http.StatusOK, partials.CardList(todos))
 }
