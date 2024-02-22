@@ -28,11 +28,13 @@ type TodoGorm struct {
 }
 
 func NewTodoRepository(db *gorm.DB) TodoRepository {
-	return &todoRepository{db}
+	return &todoRepository{
+		db: db,
+	}
 }
 
 func (t *todoRepository) AddTodo(todo TodoGorm) *TodoGorm {
-	db.Create(&todo)
+	t.db.Create(&todo)
 	return &todo
 }
 
@@ -57,6 +59,6 @@ func (t *todoRepository) DeleteTodoById(id int64) TodoGorm {
 func (t *todoRepository) ChangeStatus(id int64) *TodoGorm {
 	todo := t.GetTodoById(id)
 	todo.IsDone = !todo.IsDone
-	db.Save(&todo)
+	t.db.Save(&todo)
 	return todo
 }
