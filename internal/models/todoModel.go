@@ -4,8 +4,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
-
 //go:generate mockery --name TodoRepository
 type TodoRepository interface {
 	AddTodo(todo TodoGorm) *TodoGorm
