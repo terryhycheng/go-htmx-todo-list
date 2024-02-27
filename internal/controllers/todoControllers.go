@@ -2,85 +2,74 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/terryhycheng/go-todo-list/internal/helpers"
 	"github.com/terryhycheng/go-todo-list/internal/models"
 	"github.com/terryhycheng/go-todo-list/web/partials"
 )
 
-func AddTodoController(c echo.Context) error {
+//go:generate mockery --name TodoControllers
+type TodoControllers interface {
+	AddTodoController(c echo.Context) error
+	ChangeTodoStatusController(c echo.Context) error
+	DeleteTodoController(c echo.Context) error
+}
+
+type todoControllers struct {
+	models models.TodoRepository
+}
+
+func NewTodoControllers(m models.TodoRepository) TodoControllers {
+	return &todoControllers{
+		models: m,
+	}
+}
+
+func (tc *todoControllers) AddTodoController(c echo.Context) error {
 	title := c.FormValue("title")
 	description := c.FormValue("description")
 	priority := c.FormValue("priority")
 
-	newTodo := models.NewTodo()
-
-	if id := c.FormValue("id"); id != "" {
-		ParsedUuid, idErr := uuid.Parse(id)
-		if idErr != nil {
-			return c.String(http.StatusBadRequest, "Invalid UUID")
-		}
-
-		newTodo.Id = ParsedUuid
+	newTodoGrom := &models.TodoGorm{
+		Title:    title,
+		Content:  description,
+		Priority: priority,
+		IsDone:   false,
 	}
 
-	createNewTodoErr := newTodo.Add(title, description, priority)
-	if createNewTodoErr != nil {
-		return c.String(http.StatusBadRequest, "Failed to create new todo: "+createNewTodoErr.Error())
-	}
+	todo := tc.models.AddTodo(*newTodoGrom)
 
-	return helpers.Render(c, http.StatusCreated, partials.Card(newTodo))
+	return helpers.Render(c, http.StatusCreated, partials.Card(todo))
 }
 
-func ChangeTodoStatusController(c echo.Context) error {
+func (tc *todoControllers) ChangeTodoStatusController(c echo.Context) error {
 	id := c.Param("id")
 
-	ParsedUuid, idErr := uuid.Parse(id)
-	if idErr != nil {
-		return c.String(http.StatusBadRequest, "Invalid UUID")
+	i, err := strconv.ParseInt(id, 10, 64)
+
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid ID")
 	}
 
-	todos := models.NewTodos()
-
-	getAllErr := todos.GetAll()
-	if getAllErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to get todos from Redis: "+getAllErr.Error())
-	}
-
-	todo, _, getTodoErr := todos.GetByID(ParsedUuid)
-	if getTodoErr != nil {
-		return c.String(http.StatusNotFound, "Failed to get todo: "+getTodoErr.Error())
-	}
-
-	changeStatusErr := todo.ChangeStatus()
-	if changeStatusErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to change status: "+changeStatusErr.Error())
-	}
+	todo := tc.models.ChangeStatus(i)
 
 	return helpers.Render(c, http.StatusOK, partials.Card(todo))
 }
 
-func DeleteTodoController(c echo.Context) error {
+func (tc *todoControllers) DeleteTodoController(c echo.Context) error {
 	id := c.Param("id")
 
-	ParsedUuid, idErr := uuid.Parse(id)
-	if idErr != nil {
-		return c.String(http.StatusBadRequest, "Invalid UUID")
+	i, err := strconv.ParseInt(id, 10, 64)
+
+	if err != nil {
+		return c.String(http.StatusBadRequest, "Invalid ID")
 	}
 
-	todos := models.NewTodos()
+	tc.models.DeleteTodoById(i)
 
-	getAllErr := todos.GetAll()
-	if getAllErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to get todos from Redis: "+getAllErr.Error())
-	}
-
-	deleteErr := todos.Delete(ParsedUuid)
-	if deleteErr != nil {
-		return c.String(http.StatusInternalServerError, "Failed to delete todo: "+deleteErr.Error())
-	}
+	todos := tc.models.GetTodos()
 
 	return helpers.Render(c, http.StatusOK, partials.CardList(todos))
 }

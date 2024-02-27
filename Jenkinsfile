@@ -21,10 +21,11 @@ pipeline {
       environment {
           scannerHome = tool 'SonarQubeScanner'
           PROJECT_NAME = 'go-todo-list-scan'
+          redisUrl = 'localhost:6379'
       }
       steps {
           sh 'go version'
-          sh 'go test -coverprofile=coverage.out ./...'
+          sh "REDIS_URL=${redisUrl} bash -c  'go test ./...' -coverprofile=coverage.out ./..."
           
           withSonarQubeEnv('Synology Sonar Server') {
             sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=$PROJECT_NAME -Dsonar.sources=. -Dsonar.language=go -Dsonar.go.coverage.reportPaths=./coverage.out -Dsonar.coverage.exclusions=**/*_test.go -Dsonar.exclusions=**/*_templ.go,tailwind.config.js"

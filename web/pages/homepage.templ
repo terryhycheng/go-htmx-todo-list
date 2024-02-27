@@ -5,9 +5,9 @@ import (
 	"github.com/terryhycheng/go-todo-list/internal/models"
 )
 
-templ Homepage(todo *models.Todos) {
+templ Homepage(todos []models.TodoGorm) {
 	@partials.MainLayout() {
 		@partials.Header()
-		@partials.CardList(todo)
+		@partials.CardList(todos)
 	}
 }

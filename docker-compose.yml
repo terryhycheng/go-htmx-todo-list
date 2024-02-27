@@ -6,9 +6,3 @@ services:
     build: .
     ports:
       - "3000:3000"
-  db:
-    image: redis/redis-stack-server:latest
-    environment:
-      - REDIS_ARGS="--requirepass mypassword"
-    volumes:
-      - ./database:/data

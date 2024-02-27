@@ -2,7 +2,7 @@ package utils
 
 import "github.com/terryhycheng/go-todo-list/internal/models"
 
-func GetButtonColour(card *models.Todo) string {
+func GetButtonColour(card *models.TodoGorm) string {
 	if card.IsDone {
 		return "bg-darkGreen"
 	} else {
@@ -22,25 +22,25 @@ func GetCardBorder(isDone bool) string {
 	return ""
 }
 
-func GetCardIconPath(card *models.Todo) string {
+func GetCardIconPath(card *models.TodoGorm) string {
 	var iconName string
-	
+
 	if card.IsDone {
 		iconName = "CheckOutline"
 	} else {
 
 		if card.Priority == "urgent" {
 			iconName = "LightningBoltOutline"
-	} else {
-		iconName = "CalendarOutline"
-	}
+		} else {
+			iconName = "CalendarOutline"
+		}
 
 	}
 
-	return "/assets/" + iconName + ".svg"	
+	return "/assets/" + iconName + ".svg"
 }
 
-func GetCardIconBgColour(card *models.Todo) string {
+func GetCardIconBgColour(card *models.TodoGorm) string {
 	if card.IsDone {
 		return "bg-green"
 	}
