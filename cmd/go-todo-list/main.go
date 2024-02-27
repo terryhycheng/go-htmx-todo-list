@@ -5,7 +5,6 @@ import (
 	"github.com/terryhycheng/go-todo-list/internal/controllers"
 	"github.com/terryhycheng/go-todo-list/internal/helpers"
 	"github.com/terryhycheng/go-todo-list/internal/models"
-	"github.com/terryhycheng/go-todo-list/internal/routes"
 )
 
 func main() {
@@ -29,9 +28,18 @@ func main() {
 	// General Routes
 	e.GET("/", hc.HomePageController)
 
-	// Todo routes
-	todoGroup := e.Group("/todo")
-	routes.TodoSubRoutes(todoGroup, c)
+	// API Routes
+	v1 := e.Group("/api/v1")
+	{
+		todo := v1.Group("/todo")
+		{
+
+			todo.POST("", c.AddTodoController)
+			// e.PUT("/:id", controllers.ChangeTodoDetailsController)
+			todo.PUT("/status/:id", c.ChangeTodoStatusController)
+			todo.DELETE("/:id", c.DeleteTodoController)
+		}
+	}
 
 	e.Logger.Fatal(e.Start(":" + port))
 }
